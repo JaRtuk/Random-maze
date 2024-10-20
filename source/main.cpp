@@ -1,24 +1,15 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <thread>
-#include <chrono>
-#include <string>
-#include <cstdlib>
-#include <ctime>
+#include "includes.hpp"
 
 #define wait(time) std::this_thread::sleep_for(std::chrono::milliseconds(time))
 
- struct cord
- {
-    int oX;
-    int oY;
-    bool life = 0;
-}pl;
+struct cord
+{
+  int oX;
+  int oY;
+  bool life = 0;
+}pl, food;
 
-cord food;
-
-struct wr_way_cd
+struct way_data
 {
     std::vector<int> oY;
     std::vector<int> oX;
@@ -26,177 +17,11 @@ struct wr_way_cd
     int cnt = 0;
     std::vector<int> wr_dir;
 }way;
- 
+
 std::vector<std::string> arr;
 
 int score = 0;
 
-//working but it had some problems
-/*
-void create_wrong_way()
-{
-    for(;;)
-    {
-            bool dir = rand() % 2;
-            if(dir)
-            {
-                bool dir_y = 0;
-                if (way.oY[way.cnt - 1] <= 2)
-                    dir_y = 1;
-                else if (way.oY[way.cnt - 1] >= 21)
-                    dir_y = 0;
-                else
-                    dir_y = rand() % 2;
-
-
-                if(dir_y)
-                    way.oY.push_back(way.oY[way.cnt - 1] + 1);
-                else
-                    way.oY.push_back(way.oY[way.cnt - 1] - 1);
-
-                way.oX.push_back(way.oX[way.cnt - 1]);
-                ++way.cnt;
-            }
-            else
-            {
-                bool dir_x = 0;
-                if (way.oX[way.cnt - 1] <= 2)
-                    dir_x = 1;
-                else if (way.oX[way.cnt - 1] >= 27)
-                    dir_x = 0;
-                else
-                    dir_x = rand() % 2;
-
-
-                if(dir_x)
-                    way.oX.push_back(way.oX[way.cnt - 1] + 1);
-                else
-                    way.oX.push_back(way.oX[way.cnt - 1] - 1);
-
-                way.oY.push_back(way.oY[way.cnt - 1]);
-                ++way.cnt;
-            }
-            if (way.oY[way.cnt] == way.oY[way.cnt - 1 - 1] && way.oX[way.cnt] == way.oX[way.cnt - 1 - 1])
-                --way.cnt;
-            else
-                return;
-    }    
-}
-
-
-// Second wrong
-
-
-    for(;;)
-    {
-        short dir = rand() % 4;  // 0 - left ; 1 - top ; 2 - right ; 3 - down(you)
-        if (way.last_dir == dir + 2 || way.last_dir == dir - 2)
-            continue;
-        
-        int length = (rand() % 7) + 4;
-        bool ok = 0;
-
-        switch (dir)
-        {
-        case (0):
-            for(int it = 0; it < length; ++it)
-            {   
-                if (way.oX[way.cnt - 1] == 1)
-                    break;
-                way.oX.push_back(way.oX[way.cnt - 1] - 1);
-
-                // int snake_moving = rand() % 4;
-                // if (snake_moving == 2 && way.oY[way.cnt - 1] >= 1)
-                //     way.oY.push_back(way.oY[way.cnt - 1] - 1);
-                // else if (snake_moving == 3 && way.oY[way.cnt - 1] <= 21)
-                //      way.oY.push_back(way.oY[way.cnt - 1] + 1);
-                // else
-                //     way.oY.push_back(way.oY[way.cnt - 1]);
-
-                way.oY.push_back(way.oY[way.cnt - 1]);
-
-                for(int it = 0; it < way.cnt; ++it)
-                    if (way.oX[it] == way.oX[way.cnt] && way.oY[it] == way.oY[way.cnt])
-
-                ok = 1;
-                ++way.cnt;
-            }
-            if (ok)
-                return;
-            break;
-        case(1):
-            for(int it = 0; it < length; ++it)
-            {   
-                if (way.oY[way.cnt - 1] == 1)
-                    break;
-                way.oY.push_back(way.oY[way.cnt - 1] - 1);
-
-                // int snake_moving = rand() % 4;
-                // if (snake_moving == 2 && way.oX[way.cnt - 1] >= 1)
-                //     way.oX.push_back(way.oX[way.cnt - 1] - 1);
-                // else if (snake_moving == 3 && way.oX[way.cnt - 1] <= 28)
-                //      way.oX.push_back(way.oX[way.cnt - 1] + 1);
-                // else
-                //     way.oX.push_back(way.oX[way.cnt - 1]);
-
-                way.oX.push_back(way.oX[way.cnt - 1]);
-
-                ok = 1;
-                ++way.cnt;
-            }
-            if (ok)
-                return;
-            break;
-        case(2):
-            for(int it = 0; it < length; ++it)
-            {   
-                if (way.oX[way.cnt - 1] == 28)
-                    break;
-                way.oX.push_back(way.oX[way.cnt - 1] = 1);
-
-                // int snake_moving = rand() % 4;
-                // if (snake_moving == 2 && way.oY[way.cnt - 1] >= 1)
-                //     way.oY.push_back(way.oY[way.cnt - 1] - 1);
-                // else if (snake_moving == 3 && way.oY[way.cnt - 1] <= 21)
-                //      way.oY.push_back(way.oY[way.cnt - 1] + 1);
-                // else
-                //     way.oY.push_back(way.oY[way.cnt - 1]);
-
-                way.oY.push_back(way.oY[way.cnt - 1]);
-
-                ok = 1;
-                ++way.cnt;
-            }
-            if (ok)
-                return;
-            break;
-        default:
-            for(int it = 0; it < length; ++it)
-            {   
-                if (way.oY[way.cnt - 1] == 21)
-                    break;
-                way.oY.push_back(way.oY[way.cnt - 1] + 1);
-
-                // int snake_moving = rand() % 4;
-                // if (snake_moving == 2 && way.oX[way.cnt - 1] >= 1)
-                //     way.oX.push_back(way.oX[way.cnt - 1] - 1);
-                // else if (snake_moving == 3 && way.oX[way.cnt - 1] <= 28)
-                //      way.oX.push_back(way.oX[way.cnt - 1] + 1);
-                // else
-                //     way.oX.push_back(way.oX[way.cnt - 1]);
-
-                way.oX.push_back(way.oX[way.cnt - 1]);
-
-                ok = 1;
-                ++way.cnt;
-            }
-            if (ok)
-                return;
-            break;
-        }
-    }
-
-*/
 
 void create_food()
 {
@@ -403,10 +228,6 @@ void find_wr_way()
  
 void create_walls()
 {
-    way.oX.clear();
-    way.oY.clear();
-    way.cnt = 0;
-
     //creator down
     bool plus_or_min = rand() % 2;
     bool dir_x_or_y = rand() % 2;
@@ -452,6 +273,12 @@ void create_walls()
 
 void destroy_walls()
 {
+    way.oX.clear();
+    way.oY.clear();
+    way.dir_list.clear();
+    way.dir_list.clear();
+    way.cnt = 0;
+
     for(int y = 1; y < 22; ++y)
         for(int x = 1; x < 28; ++x)
             arr[y][x] = ' ';
